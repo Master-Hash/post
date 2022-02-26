@@ -24,8 +24,10 @@ export async function getLogByFileName(fileName: string): Promise<CommitMeta> {
   p.close();
   const stringData = new TextDecoder().decode(uint8ArrayData);
   // 换行符，跨平台的痛
-  return stringData.split("\r\n").map((line) => {
-    const [author, date, hash, fullHash, message] = line.split("|");
-    return { author, date, hash, fullHash, message: message.replace(/\n$/, "") };
-  });
+  return stringData.split("\n")
+    .filter(line => line)  // 消除空行
+    .map((line) => {
+      const [author, date, hash, fullHash, message] = line.split("|");
+      return { author, date, hash, fullHash, message };
+    });
 }
