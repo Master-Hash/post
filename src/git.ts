@@ -26,7 +26,6 @@ export async function getLogByFileName(fileName: string): Promise<CommitMeta> {
   // 换行符，跨平台的痛
   return stringData.split("\r\n").map((line) => {
     const [author, date, hash, fullHash, message] = line.split("|");
-    // 切片是为了去除结尾的换行符
-    return { author, date, hash, fullHash, message: message.slice(0, -1) };
+    return { author, date, hash, fullHash, message: message.replace(/\n$/, "") };
   });
 }

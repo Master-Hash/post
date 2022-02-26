@@ -21,6 +21,7 @@ $ deno run --allow-read --allow-run --allow-write --no-check --import-map ./impo
 - 文档更变一次一篇
 - 文档更变的提交信息仅限一行
   - 考虑到更变细节可以从 Github 找到，提交信息点到为止即可。
+- 为避免 Github 污染提交信息，不应合并草稿，而应当变基。
 
 ## 目标
 
