@@ -3,16 +3,16 @@ import { getLogByFileName } from "./git.ts";
 import { markdownToHtml } from "./markdowntohtml.ts";
 import matter from "gray-matter";
 
-type DataType = {
-  [slug: string]: {
-    content: string;
-    commits: CommitMeta;
-  };
-};
+type DataType = Array<{
+  slug: string;
+  content: string;
+  commits: CommitMeta;
+}>;
+
 
 async function getPosts(): Promise<DataType> {
   const fileNames = Deno.readDir("./post");
-  const data = {} as DataType;
+  const data = [] as DataType;
   for await (const _fileName of fileNames) {
     if (_fileName.isFile) {
       const fileName = _fileName.name;
@@ -20,21 +20,14 @@ async function getPosts(): Promise<DataType> {
       const x = await getLogByFileName(fileName);
       const fileContent = await Deno.readTextFile(`./post/${fileName}`);
       const { data: headers, content } = matter(fileContent);
-      data[slug] = { content: await markdownToHtml(content), ...headers, commits: x };
+      data.push({ slug, content: await markdownToHtml(content), ...headers, commits: x });
     }
   }
   // 按发表时间，从新到旧（不过我不觉得这很科学
-  // 并且 JavaScript 的对象本来就是无序的，forin 遍历总会打乱
-  const neoData = {};
-  function compareByPublishDate(a: string, b: string) {
-    return new Date(data[b].commits[0].date).valueOf() - new Date(data[a].commits[0].date).valueOf();
-  }
-  Object.keys(data).sort(compareByPublishDate).forEach(
-    (slug) => {
-      neoData[slug] = data[slug];
-    }
+  // ~~并且 JavaScript 的对象本来就是无序的，forin 遍历总会打乱~~
+  return data.sort((a, b) =>
+    new Date(b.commits[0].date).valueOf() - new Date(a.commits[0].date).valueOf()
   );
-  return data;
 }
 
 const d = JSON.stringify(await getPosts());
