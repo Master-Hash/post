@@ -38,6 +38,12 @@ $ deno run --allow-read --allow-run --allow-write --no-check --import-map ./impo
 
 如果不需要，冗余的类属性不会有任何副作用。
 
+## 标签
+
+我还没想通标签怎么处理。估计只有再积累一定量，才有本事开专栏吧。
+
+暂时没有机会在 `./post` 文件夹里开子文件夹来表示专栏的计划，也没有通过文件头加标签或分类的计划。
+
 ## 参考
 
 [Next.js blog starter](https://github.com/vercel/next.js/tree/canary/examples/blog-starter)

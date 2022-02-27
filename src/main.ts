@@ -23,6 +23,17 @@ async function getPosts(): Promise<DataType> {
       data[slug] = { content: await markdownToHtml(content), ...headers, commits: x };
     }
   }
+  // 按发表时间，从新到旧（不过我不觉得这很科学
+  // 并且 JavaScript 的对象本来就是无序的，forin 遍历总会打乱
+  const neoData = {};
+  function compareByPublishDate(a: string, b: string) {
+    return new Date(data[b].commits[0].date).valueOf() - new Date(data[a].commits[0].date).valueOf();
+  }
+  Object.keys(data).sort(compareByPublishDate).forEach(
+    (slug) => {
+      neoData[slug] = data[slug];
+    }
+  );
   return data;
 }
 
