@@ -26,6 +26,9 @@ $ deno run --allow-read --allow-run --allow-write --no-check --import-map ./impo
 ## 目标
 
 - scheme 稳定
+- 不过多拓展 CommonMark 语法
+  - 目前拓展有 frontmatter 和 代码高亮
+  - 强烈推荐阅读：https://github.com/micromark/micromark#extending-markdown
 - 尽量涵盖所有信息
 - 前端无关（但样式表除外，见下）
 - 测试良好（TODO
@@ -40,15 +43,18 @@ $ deno run --allow-read --allow-run --allow-write --no-check --import-map ./impo
 
 ## 标签
 
+- title
+- description
+
 我还没想通标签怎么处理。估计只有再积累一定量，才有本事开专栏吧。
 
 暂时没有机会在 `./post` 文件夹里开子文件夹来表示专栏的计划，也没有通过文件头加标签或分类的计划。
 
-## 参考
+## 代码参考
 
 [Next.js blog starter](https://github.com/vercel/next.js/tree/canary/examples/blog-starter)
 
-## 使用 Deno
+## 技术选型：Deno
 
 主要是因为不会用 node 的 event。return 时怎么等待？
 
