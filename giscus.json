@@ -1,6 +1,6 @@
 {
     "origins": [
-        "https://giscus.app"
+        "https://land.master-hash.workers.dev"
     ],
     "originsRegex": [
         "http://localhost:[0-9]+"
