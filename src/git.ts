@@ -1,10 +1,4 @@
-export type CommitMeta = Array<{
-  date: string;
-  author: string;
-  hash: string;
-  fullHash: string;
-  message: string;
-}>;
+import type { CommitMeta } from "./types.ts";
 
 export async function getLogByFileName(fileName: string): Promise<CommitMeta> {
   const p = Deno.run({
@@ -16,16 +10,16 @@ export async function getLogByFileName(fileName: string): Promise<CommitMeta> {
       "--pretty=%an|%ad|%h|%H|%s",
       "--reverse",
       "--",
-      `post/${fileName}`
+      `post/${fileName}`,
     ],
-    stdout: "piped"
+    stdout: "piped",
   });
   const uint8ArrayData = await p.output();
   p.close();
   const stringData = new TextDecoder().decode(uint8ArrayData);
   // 换行符，跨平台的痛
   return stringData.split("\n")
-    .filter(line => line)  // 消除空行
+    .filter((line) => line) // 消除空行
     .map((line) => {
       const [author, date, hash, fullHash, message] = line.split("|");
       return { author, date, hash, fullHash, message };
