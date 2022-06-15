@@ -8,7 +8,7 @@
 ## 生成 `data.json`
 
 ```console
-$ deno run --allow-read --allow-run --allow-write --no-check --import-map ./import_map.json ./src/main.ts
+$ deno task dump
 ```
 
 会在根目录生成 `./data.json` 文件。
