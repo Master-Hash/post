@@ -1,9 +1,9 @@
 {
-    "origins": [
-        "https://land.master-hash.workers.dev"
-    ],
-    "originsRegex": [
-        "http://localhost:[0-9]+"
-    ],
-    "defaultCommentOrder": "oldest"
+  "origins": [
+    "https://land.master-hash.workers.dev"
+  ],
+  "originsRegex": [
+    "http://localhost:[0-9]+"
+  ],
+  "defaultCommentOrder": "oldest"
 }

@@ -1,10 +1,10 @@
 {
-    "imports": {
-        "rehype-prism-plus": "https://esm.sh/rehype-prism-plus",
-        "gray-matter": "https://esm.sh/gray-matter",
-        "rehype-stringify": "https://esm.sh/rehype-stringify",
-        "remark-parse": "https://esm.sh/remark-parse",
-        "remark-rehype": "https://esm.sh/remark-rehype",
-        "unified": "https://esm.sh/unified"
-    }
+  "imports": {
+    "rehype-prism-plus": "https://esm.sh/rehype-prism-plus",
+    "gray-matter": "https://esm.sh/gray-matter",
+    "rehype-stringify": "https://esm.sh/rehype-stringify",
+    "remark-parse": "https://esm.sh/remark-parse",
+    "remark-rehype": "https://esm.sh/remark-rehype",
+    "unified": "https://esm.sh/unified"
+  }
 }
