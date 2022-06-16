@@ -1,9 +1,8 @@
 import type { CommitMeta } from "./types.ts";
 
 export async function getLogByFileName(fileName: string): Promise<CommitMeta> {
-  const p = Deno.run({
-    cmd: [
-      "git",
+  const { stdout } = await Deno.spawn("git", {
+    args: [
       "-P",
       "log",
       "--date=iso-strict",
@@ -12,11 +11,8 @@ export async function getLogByFileName(fileName: string): Promise<CommitMeta> {
       "--",
       `post/${fileName}`,
     ],
-    stdout: "piped",
   });
-  const uint8ArrayData = await p.output();
-  p.close();
-  const stringData = new TextDecoder().decode(uint8ArrayData);
+  const stringData = new TextDecoder().decode(stdout);
   // 换行符，跨平台的痛
   return stringData.split("\n")
     .filter((line) => line) // 消除空行
