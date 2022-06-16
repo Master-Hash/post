@@ -2,7 +2,10 @@
   "deno.enable": true,
   "deno.lint": true,
   "deno.unstable": false,
-  "[json][jsonc][javascript][javascriptreact][typescript][typescriptreact][markdown]": {
+  "[jsonc][javascript][javascriptreact][typescript][typescriptreact][markdown]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[json]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
   }
 }
