@@ -24,4 +24,4 @@ async function getPosts(): Promise<DataType> {
 }
 
 const d = JSON.stringify(await getPosts());
-await Deno.writeTextFile("./data.json", d);
+console.log(d);

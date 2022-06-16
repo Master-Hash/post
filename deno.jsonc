@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dump": "deno run --allow-read --allow-run --allow-write --no-check ./src/main.ts"
+    "dump": "deno run --allow-read --allow-run --allow-write ./src/main.ts > ./data.json"
   },
   "importMap": "import_map.json"
 }
