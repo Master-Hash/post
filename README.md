@@ -24,7 +24,7 @@ $ deno task dump
 - 添加 OpenSearch 搜索引擎，将直接访问 Github
 - 使用 vscode 全局搜索，包括：
   - [Github web editor](https://github.dev/Master-Hash/post) 需登录 github.com
-  - [vscode.dev](https://vscode.dev/github/Master-Hash/post) 需拉去 Github OAuth2
+  - [vscode.dev](https://vscode.dev/github/Master-Hash/post) 需拉取 Github OAuth2
     认证，国内慎用
   - 本地使用 Github Repositories 拓展打开远程仓库
   - 本地克隆仓库
@@ -89,9 +89,3 @@ $ deno task dump
 ## 代码参考
 
 [Next.js blog starter](https://github.com/vercel/next.js/tree/canary/examples/blog-starter)
-
-## 技术选型：Deno
-
-主要是因为不会用 node 的 event。return 时怎么等待？
-
-虽说 Deno 的 ReadableStream 也很费解……但毕竟是 Web 标准。
