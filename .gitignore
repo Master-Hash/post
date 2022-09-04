@@ -106,3 +106,5 @@ dist
 # Hash defines
 data.json
 灵感/
+build/
+data1.json
