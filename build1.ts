@@ -1,7 +1,8 @@
-import { ensureDir, walk } from "https://deno.land/std@0.154.0/fs/mod.ts";
-import { join, parse, SEP } from "https://deno.land/std@0.154.0/path/mod.ts";
-import { compile } from "https://esm.sh/@mdx-js/mdx@2.1.3";
+import { ensureDir, walk } from "std/fs/mod.ts";
+import { join, parse, SEP } from "std/path/mod.ts";
 import matter from "gray-matter";
+import { markdownToComponent } from "./mdpipeline.ts";
+import { renderToString } from "https://esm.sh/react-dom@18.2.0/server";
 
 await ensureDir("./build");
 
@@ -16,6 +17,7 @@ type CommitMeta = Array<{
 type Post = {
   slug: string;
   path: string;
+  fspath: string;
   title: string;
   category: string;
   position?: number;
@@ -43,12 +45,10 @@ for await (const entry of walk("灵感")) {
      */
     const f = await Deno.readTextFile(entry.path),
       { name: slug, dir } = parse(entry.path),
-      postModule = await compile(f, {
-        jsx: true,
-        format: "md",
-      });
+      postModule = await markdownToComponent(f);
     const { data: _data } = matter(f),
-      data = _data as FrontMatter;
+      data = _data as FrontMatter,
+      category = dir.split(SEP).at(-1)!;
 
     const item = {
       slug,
@@ -56,7 +56,13 @@ for await (const entry of walk("灵感")) {
       description: data?.meta?.description,
       position: data?.position,
       path: encodeURI(`/${dir.replaceAll(SEP, "/")}/${slug}`),
-      category: dir.split(SEP).at(-1),
+      fspath: "./" +
+        (join("./build", encodeURI(category), encodeURI(slug) + ".jsx")
+          .replaceAll(
+            SEP,
+            "/",
+          )),
+      category,
       image: (data.meta && "og:image" in data.meta)
         ? data.meta["og:image"]
         : undefined,
@@ -66,12 +72,16 @@ for await (const entry of walk("灵感")) {
     /**
      * @todo git commit message
      */
-    await ensureDir(join("./build", encodeURI(dir)));
+    await ensureDir(parse(item.fspath).dir);
     await Deno.writeTextFile(
-      join("./build", encodeURI(dir), encodeURI(slug) + ".jsx"),
-      postModule.toString(),
+      item.fspath,
+      postModule,
     );
   }
 }
 
 await Deno.writeTextFile("./data1.json", JSON.stringify(tData));
+
+/**
+ * @todo atom
+ */
