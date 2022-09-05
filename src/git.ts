@@ -1,6 +1,6 @@
 import type { CommitMeta } from "./types.ts";
 
-export async function getLogByFileName(fileName: string): Promise<CommitMeta> {
+export async function getLogByPath(path: string): Promise<CommitMeta> {
   const { stdout } = await Deno.spawn("git", {
     args: [
       "-P",
@@ -9,7 +9,7 @@ export async function getLogByFileName(fileName: string): Promise<CommitMeta> {
       "--pretty=%an|%ad|%h|%H|%s",
       "--reverse",
       "--",
-      `post/${fileName}`,
+      path,
     ],
   });
   const stringData = new TextDecoder().decode(stdout);

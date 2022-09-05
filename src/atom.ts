@@ -1,6 +1,5 @@
 import { Feed } from "https://esm.sh/feed";
-
-const SITEURL = "http://localhost:8787/";
+import { SITEURL } from "./constant.ts";
 
 export default function generateAtom(posts) {
   const feed = new Feed({
