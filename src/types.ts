@@ -10,9 +10,10 @@ export type Post = {
   path: string;
   fspath: string;
   title: string;
-  category: string;
-  position?: number;
   description: string;
+  content: string;
+  category: string;
+  position: number;
   image?: string;
   commits: CommitMeta;
 };

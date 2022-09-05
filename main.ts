@@ -7,29 +7,36 @@ import type { FrontMatter, Post } from "./src/types.ts";
 import { getLogByPath } from "./src/git.ts";
 // import getAtom from "./src/atom.ts";
 
+const dateFormat = new Intl.DateTimeFormat("zh-CN", { dateStyle: "long" });
+
 await ensureDir("./build");
 
-const tData = [] as Array<Post>;
-const contentData = new Map<string, string>();
+const postData = [] as Array<Post>;
 
 for await (const entry of walk("反思")) {
   console.log(entry.path);
   if (entry.isFile) {
-    const f = await Deno.readTextFile(entry.path),
-      { name: slug, dir } = parse(entry.path),
-      postModule = await markdownToComponent(f),
+    const _f = await Deno.readTextFile(entry.path),
+      commits = await getLogByPath(entry.path),
+      { name: slug, dir } = parse(entry.path);
+    const f = `${_f}
+
+---
+
+### 修订记录
+
+${
+      commits.map((commit) =>
+        `- ${
+          dateFormat.format(new Date(commit.date))
+        } ${commit.message} [${commit.hash}](${commit.fullHash})`
+      )
+    }`;
+    const postModule = await markdownToComponent(f),
       { data: _data } = matter(f),
       data = _data as FrontMatter,
       category = dir.split(SEP).at(-1)!,
-      commits = await getLogByPath(entry.path);
-
-    const item = {
-      slug,
-      title: data?.meta?.title,
-      description: data?.meta?.description,
-      position: data?.position,
-      path: encodeURI(`/${dir.replaceAll(SEP, "/")}/${slug}`),
-      fspath: "./" +
+      fspath = "./" +
         (join(
           "./build",
           encodeURI(dir.replaceAll(SEP, "/")),
@@ -38,29 +45,34 @@ for await (const entry of walk("反思")) {
           .replaceAll(
             SEP,
             "/",
-          )),
+          ));
+
+    await ensureDir(parse(fspath).dir);
+    await Deno.writeTextFile(
+      fspath,
+      postModule,
+    );
+
+    const u = encodeURI(fspath),
+      m = await import(u),
+      content = renderToStaticMarkup(m.default());
+
+    const item: Post = {
+      slug,
+      title: data?.meta?.title,
+      description: data?.meta?.description,
+      position: data?.position,
+      path: encodeURI(`/${dir.replaceAll(SEP, "/")}/${slug}`),
+      fspath,
       category,
+      content,
       image: (data.meta && "og:image" in data.meta)
         ? data.meta["og:image"]
         : undefined,
       commits,
-    } as Post;
-    tData.push(item);
-    await ensureDir(parse(item.fspath).dir);
-    await Deno.writeTextFile(
-      item.fspath,
-      postModule,
-    );
+    };
+    postData.push(item);
   }
 }
 
-await Deno.writeTextFile("./build/data.json", JSON.stringify(tData));
-
-for (const item of tData) {
-  const u = encodeURI(item.fspath),
-    m = await import(u),
-    content = renderToStaticMarkup(m.default());
-  contentData.set(item.slug, content);
-}
-
-// console.log(getAtom(tData, contentData));
+await Deno.writeTextFile("./build/data.json", JSON.stringify(postData));
