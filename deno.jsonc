@@ -1,4 +1,8 @@
 {
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  },
   "tasks": {
     "dump": "deno run --allow-read --allow-run --allow-write --unstable ./src/main.ts > ./data.json"
   },

@@ -2,7 +2,7 @@ import { ensureDir, walk } from "std/fs/mod.ts";
 import { join, parse, SEP } from "std/path/mod.ts";
 import matter from "gray-matter";
 import { markdownToComponent } from "./mdpipeline.ts";
-import { renderToString } from "https://esm.sh/react-dom@18.2.0/server";
+import { renderToStaticMarkup } from "https://esm.sh/react-dom@18.2.0/server";
 
 await ensureDir("./build");
 
@@ -36,13 +36,11 @@ type FrontMatter = {
 };
 
 const tData = [] as Array<Post>;
+const contentData = new Map<string, string>();
 
 for await (const entry of walk("灵感")) {
   console.log(entry.path);
   if (entry.isFile) {
-    /**
-     * @todo 分离编译逻辑
-     */
     const f = await Deno.readTextFile(entry.path),
       { name: slug, dir } = parse(entry.path),
       postModule = await markdownToComponent(f);
@@ -73,15 +71,22 @@ for await (const entry of walk("灵感")) {
      * @todo git commit message
      */
     await ensureDir(parse(item.fspath).dir);
-    await Deno.writeTextFile(
-      item.fspath,
-      postModule,
-    );
+    // await Deno.writeTextFile(
+    //   item.fspath,
+    //   postModule,
+    // );
   }
 }
 
-await Deno.writeTextFile("./data1.json", JSON.stringify(tData));
+// await Deno.writeTextFile("./data1.json", JSON.stringify(tData));
 
 /**
  * @todo atom
  */
+for (const item of tData) {
+  const u = encodeURI(item.fspath);
+  const m = await import(u);
+  const content = renderToStaticMarkup(m.default());
+  console.log(content);
+  contentData.set(item.slug, content);
+}
