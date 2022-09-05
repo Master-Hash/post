@@ -104,6 +104,4 @@ dist
 .tern-port
 
 # Hash defines
-data.json
 build/
-data1.json

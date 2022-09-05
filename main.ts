@@ -5,6 +5,7 @@ import { markdownToComponent } from "./src/mdpipeline.ts";
 import { renderToStaticMarkup } from "https://esm.sh/react-dom@18.2.0/server";
 import type { FrontMatter, Post } from "./src/types.ts";
 import { getLogByPath } from "./src/git.ts";
+// import getAtom from "./src/atom.ts";
 
 await ensureDir("./build");
 
@@ -16,10 +17,11 @@ for await (const entry of walk("反思")) {
   if (entry.isFile) {
     const f = await Deno.readTextFile(entry.path),
       { name: slug, dir } = parse(entry.path),
-      postModule = await markdownToComponent(f);
-    const { data: _data } = matter(f),
+      postModule = await markdownToComponent(f),
+      { data: _data } = matter(f),
       data = _data as FrontMatter,
-      category = dir.split(SEP).at(-1)!;
+      category = dir.split(SEP).at(-1)!,
+      commits = await getLogByPath(entry.path);
 
     const item = {
       slug,
@@ -41,9 +43,9 @@ for await (const entry of walk("反思")) {
       image: (data.meta && "og:image" in data.meta)
         ? data.meta["og:image"]
         : undefined,
+      commits,
     } as Post;
     tData.push(item);
-    const temp = await getLogByPath(entry.path);
     await ensureDir(parse(item.fspath).dir);
     await Deno.writeTextFile(
       item.fspath,
@@ -52,15 +54,13 @@ for await (const entry of walk("反思")) {
   }
 }
 
-await Deno.writeTextFile("./build/data1.json", JSON.stringify(tData));
+await Deno.writeTextFile("./build/data.json", JSON.stringify(tData));
 
-/**
- * @todo atom
- */
 for (const item of tData) {
-  const u = encodeURI(item.fspath);
-  const m = await import(u);
-  const content = renderToStaticMarkup(m.default());
-  console.log(content);
+  const u = encodeURI(item.fspath),
+    m = await import(u),
+    content = renderToStaticMarkup(m.default());
   contentData.set(item.slug, content);
 }
+
+// console.log(getAtom(tData, contentData));

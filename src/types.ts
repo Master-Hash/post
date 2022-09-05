@@ -14,7 +14,7 @@ export type Post = {
   position?: number;
   description: string;
   image?: string;
-  commits?: CommitMeta;
+  commits: CommitMeta;
 };
 export type FrontMatter = {
   meta: {

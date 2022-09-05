@@ -1,7 +1,11 @@
 import { Feed } from "https://esm.sh/feed";
 import { SITEURL } from "./constant.ts";
+import { Post } from "./types.ts";
 
-export default function generateAtom(posts) {
+export default function generateAtom(
+  postsData: Post[],
+  contentData: Map<string, string>,
+): string {
   const feed = new Feed({
     title: "Hashland",
     description: "文章合集",
@@ -10,10 +14,10 @@ export default function generateAtom(posts) {
     favicon: `${SITEURL}/favicon.svg`,
   });
 
-  posts.forEach((post) => {
+  postsData.forEach((post) => {
     feed.addItem({
       published: new Date(post.commits[0].date),
-      link: `${SITEURL}/post/${post.slug}`,
+      link: `${SITEURL}/${post.path}`,
       title: post.title,
       author: [
         ...new Set(post.commits
@@ -22,10 +26,10 @@ export default function generateAtom(posts) {
         return { name: author };
       }),
       image: post.image,
-      content: post.content,
+      content: contentData.get(post.slug),
       description: post.description,
-      date: new Date(post.commits.at(-1).date),
-      // date: new Date(post.commits[post.commits.length - 1].date),
+      date: new Date(post.commits.at(-1)!.date),
     });
   });
+  return feed.atom1();
 }
